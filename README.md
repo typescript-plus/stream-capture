@@ -12,17 +12,62 @@ $ npm i @typescript-plus/stream-capture --save
 
 ## Usage
 
+### Sync
+
 ```ts
-import { captureSync } from '@typescript-plus/stream-capture';
+import { capture } from '@typescript-plus/stream-capture';
 import * as fs from 'fs';
 
 const stream = fs.createWriteStream('file');
-const captured = captureSync(stream, () => {
+const captured = capture(stream, (buffer) => {
   stream.write(':)');
+  return buffer.join('');
 });
-stream.write(':(');
-stream.end(() => {
-  captured === ':)'; // true
+captured === ':)'; // true
+stream.end(':(', () => {
   fs.readFileSync('file').toString() === ':('; // true
+});
+```
+
+### Async (Promise)
+
+```ts
+import { capture } from '@typescript-plus/stream-capture';
+import * as fs from 'fs';
+
+async function write(stream: fs.WriteStream) {
+  stream.write(':D');
+}
+
+(async () => {
+  const stream = fs.createWriteStream('file');
+  const captured = await capture(stream, async (buffer) => {
+    await write(stream);
+    return buffer.join('');
+  });
+  captured === ':D'; // true
+  stream.end(':P', () => {
+    fs.readFileSync('file').toString() === ':P'; // true
+  });
+})();
+```
+
+### Capturing stdout
+
+Stream Capture accepts `Stream.Writable` objects. So you can capture stdout. It's useful for CLI testing, for example:
+
+```ts
+import { captureSync } from '@typescript-plus/stream-capture';
+
+function hello() {
+  console.log('Hello :) World');
+}
+
+it('works', () => {
+  const captured = capture(process.stdout, (buffer) => {
+    hello();
+    return buffer.join('');
+  });
+  expect(captured).toEqual('Hello :) World\n'); // success
 });
 ```

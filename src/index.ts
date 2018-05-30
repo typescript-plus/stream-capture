@@ -1,28 +1,82 @@
 import { Writable } from 'stream';
 
-export function captureSync(writable: Writable, callback: () => void) {
-  const write = writable.write;
+export type SyncCallback<T> = (buffer: string[]) => T;
+export type AsyncCallback<T> = (buffer: string[]) => Promise<T>;
+export type Callback<T> = SyncCallback<T> | AsyncCallback<T>;
+
+export interface Chunk {
+  toString(...args: any[]): string;
+}
+
+export async function capture<T>(writable: Writable, callback: (buffer: string[]) => Promise<T>): Promise<T>;
+export function capture<T>(writable: Writable, callback: (buffer: string[]) => T): T;
+
+// tslint:disable-next-line:promise-function-async
+export function capture<T>(writable: Writable, callback: Callback<T>): Promise<T> | T {
+  const original = writable.write;
   try {
     const buffer: string[] = [];
-    writable.write = (chunk: {toString(...args: any[]): string}, ...args: any[]) => {
-      // tslint:disable-next-line:no-unused-variable
-      let encoding: string | undefined;
-      let cb: (() => void) | undefined;
-      if (typeof args[0] === 'string') {
-        encoding = args.shift() as string;
-      }
-      if (typeof args[0] === 'function') {
-        cb = args.shift() as () => void;
-      }
-      buffer.push(chunk.toString());
-      if (cb !== undefined) {
-        cb();
-      }
-      return true;
-    };
-    callback();
-    return buffer.join('');
-  } finally {
-    writable.write = write;
+    writable.write = (chunk: Chunk, ...args: any[]) => write(buffer, chunk, ...args);
+    const result = callback(buffer);
+    if ((typeof result === 'object' || typeof result === 'function') && typeof (result as any).then === 'function') {
+      return new Promise<T>((resolve, reject) => {
+        (result as Promise<T>).then(value => {
+          writable.write = original;
+          resolve(value);
+        }).catch(reason => {
+          writable.write = original;
+          reject(reason);
+        });
+      });
+    }
+    writable.write = original;
+    return result;
+  } catch (e) {
+    writable.write = original;
+    throw e;
   }
 }
+
+function write(buffer: string[], chunk: Chunk, ...args: any[]) {
+  // tslint:disable-next-line:no-unused-variable
+  let encoding: string | undefined;
+  let callback: (() => void) | undefined;
+  if (typeof args[0] === 'string') {
+    encoding = args.shift() as string;
+  }
+  if (typeof args[0] === 'function') {
+    callback = args.shift() as () => void;
+  }
+  buffer.push(chunk.toString());
+  if (callback !== undefined) {
+    callback();
+  }
+  return true;
+}
+
+// export async function captureAsync(writable: Writable, callback: () => Promise<void>): Promise<string> {
+//   const original = writable.write;
+//   try {
+//     const buffer: string[] = [];
+//     writable.write = (chunk: {toString(...args: any[]): string}, ...args: any[]) => {
+//       // tslint:disable-next-line:no-unused-variable
+//       let encoding: string | undefined;
+//       let cb: (() => void) | undefined;
+//       if (typeof args[0] === 'string') {
+//         encoding = args.shift() as string;
+//       }
+//       if (typeof args[0] === 'function') {
+//         cb = args.shift() as () => void;
+//       }
+//       buffer.push(chunk.toString());
+//       if (cb !== undefined) {
+//         cb();
+//       }
+//       return true;
+//     };
+//     await callback();
+//     return buffer.join('');
+//   } finally {
+//     writable.write = original;
+//   }
+// }

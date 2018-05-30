@@ -2,10 +2,7 @@
   "defaultSeverity": "error",
   "extends": "tslint:all",
   "rules": {
-    "arrow-parens": [
-      true,
-      "ban-single-arg-parens"
-    ],
+    "arrow-parens": false,
     "comment-format": false,
     "completed-docs": false,
     "interface-name": [
