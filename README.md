@@ -2,6 +2,8 @@
 
 A TypeScript library for capturing streams.
 
+[![CircleCI](https://circleci.com/gh/typescript-plus/stream-capture.svg?style=svg)](https://circleci.com/gh/typescript-plus/stream-capture)
+
 ## Install
 
 ```bash
