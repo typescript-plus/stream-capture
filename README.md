@@ -54,10 +54,10 @@ async function write(stream: fs.WriteStream) {
 
 ### Capturing stdout
 
-Stream Capture accepts `Stream.Writable` objects. So you can capture stdout. It's useful for CLI testing, for example:
+Stream Capture accepts `stream.Writable` objects. So you can capture stdout. It's useful for CLI testing, for example:
 
 ```ts
-import { captureSync } from '@typescript-plus/stream-capture';
+import { capture } from '@typescript-plus/stream-capture';
 
 function hello() {
   console.log('Hello :) World');
