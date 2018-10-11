@@ -3,6 +3,5 @@
     "./node_modules/@myowncake/config-tslint/dist/tslint.general.json"
   ],
   "rules": {
-    "no-unsafe-any": false
   }
 }
