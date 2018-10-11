@@ -1,6 +1,6 @@
 {
   "name": "@typescript-plus/stream-capture",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A TypeScript library for capturing streams.",
   "repository": "typescript-plus/stream-capture",
   "license": "MIT",
@@ -8,8 +8,8 @@
   "files": [
     "dist"
   ],
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "scripts": {
     "dist": "npm-run-all dist:clean dist:build",
     "dist:build": "tsc -p tsconfig.dist.json",
