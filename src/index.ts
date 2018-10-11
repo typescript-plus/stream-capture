@@ -1,5 +1,3 @@
-import { Writable } from 'stream';
-
 export type SyncCallback<T> = (buffer: string[]) => T;
 export type AsyncCallback<T> = (buffer: string[]) => Promise<T>;
 export type Callback<T> = SyncCallback<T> | AsyncCallback<T>;
@@ -8,25 +6,31 @@ export interface Chunk {
   toString(...args: any[]): string;
 }
 
-export async function capture<T>(writable: Writable, callback: (buffer: string[]) => Promise<T>): Promise<T>;
-export function capture<T>(writable: Writable, callback: (buffer: string[]) => T): T;
+export async function capture<T>(
+  writable: NodeJS.WritableStream,
+  callback: (buffer: string[]) => Promise<T>
+): Promise<T>;
+export function capture<T>(writable: NodeJS.WritableStream, callback: (buffer: string[]) => T): T;
 
 // tslint:disable-next-line:promise-function-async
-export function capture<T>(writable: Writable, callback: Callback<T>): Promise<T> | T {
+export function capture<T>(writable: NodeJS.WritableStream, callback: Callback<T>): Promise<T> | T {
+  // tslint:disable-next-line:no-unbound-method
   const original = writable.write;
   try {
     const buffer: string[] = [];
     writable.write = (chunk: Chunk, ...args: any[]) => write(buffer, chunk, ...args);
     const result = callback(buffer);
-    if ((typeof result === 'object' || typeof result === 'function') && typeof (result as any).then === 'function') {
+    if (typeof (result as any).then === 'function') {
       return new Promise<T>((resolve, reject) => {
-        (result as Promise<T>).then(value => {
-          writable.write = original;
-          resolve(value);
-        }).catch(reason => {
-          writable.write = original;
-          reject(reason);
-        });
+        (result as Promise<T>)
+          .then(value => {
+            writable.write = original;
+            resolve(value);
+          })
+          .catch(reason => {
+            writable.write = original;
+            reject(reason);
+          });
       });
     }
     writable.write = original;
@@ -38,11 +42,9 @@ export function capture<T>(writable: Writable, callback: Callback<T>): Promise<T
 }
 
 function write(buffer: string[], chunk: Chunk, ...args: any[]) {
-  // tslint:disable-next-line:no-unused-variable
-  let encoding: string | undefined;
   let callback: (() => void) | undefined;
   if (typeof args[0] === 'string') {
-    encoding = args.shift() as string;
+    args.shift(); // encoding
   }
   if (typeof args[0] === 'function') {
     callback = args.shift() as () => void;
