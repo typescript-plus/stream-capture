@@ -6,21 +6,21 @@ import { capture } from '../../../src';
 
 tmp.setGracefulCleanup();
 const tmpdir = tmp.dirSync().name;
-const FILE = path.join(tmpdir, "file");
+const FILE = path.join(tmpdir, 'file');
 
 // eslint-disable-next-line @typescript-eslint/require-await
 async function write(stream: fs.WriteStream) {
-  stream.write(":D");
+  stream.write(':D');
 }
 
-it("README - Usage - Async (Promise)", async () => {
+it('README - Usage - Async (Promise)', async () => {
   const stream = fs.createWriteStream(FILE);
-  const captured = await capture(stream, async buffer => {
+  const captured = await capture(stream, async (buffer) => {
     await write(stream);
-    return buffer.join("");
+    return buffer.join('');
   });
-  expect(captured).toEqual(":D"); // true
-  stream.end(":P", () => {
-    expect(fs.readFileSync(FILE).toString()).toEqual(":P");
+  expect(captured).toEqual(':D'); // true
+  stream.end(':P', () => {
+    expect(fs.readFileSync(FILE).toString()).toEqual(':P');
   });
 });

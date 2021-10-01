@@ -22,11 +22,11 @@ export function capture<T>(writable: NodeJS.WritableStream, callback: Callback<T
     if (typeof (result as { then?: unknown }).then === 'function') {
       return new Promise<T>((resolve, reject) => {
         (result as Promise<T>)
-          .then(value => {
+          .then((value) => {
             writable.write = original;
             resolve(value);
           })
-          .catch(reason => {
+          .catch((reason) => {
             writable.write = original;
             reject(reason);
           });
