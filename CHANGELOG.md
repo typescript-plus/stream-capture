@@ -1,29 +1,27 @@
 
 # Changelog
 
-## :)
+Based on [Keep a Changelog] and [Semantic Versioning Caret].
 
-### Format
+## Edge (HEAD)
 
-Based on [Keep a Changelog].
+* Nothing yet.
 
-### Versioning Policy
+## 0.4.0
 
-[Semantic Versioning Caret]
+### Changed
 
-## Versions
+* updated dependencies.
 
-### Edge (HEAD)
+## 0.3.0
 
-### 0.3.0
-
-#### Changed
+### Changed
 
 * updated libraries.
 
-### 0.2.0
+## 0.2.0
 
-#### Removed
+### Removed
 
 * removed `captureSync()`. Use `capture()` instead.
 
