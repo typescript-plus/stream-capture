@@ -8,15 +8,15 @@ tmp.setGracefulCleanup();
 const tmpdir = tmp.dirSync().name;
 const FILE = path.join(tmpdir, 'file');
 
-// eslint-disable-next-line @typescript-eslint/require-await
-async function write(stream: fs.WriteStream) {
-  stream.write(':D');
+async function asyncFunc() {
+  await Promise.resolve(true);
 }
 
 it('README - Usage - Async (Promise)', async () => {
   const stream = fs.createWriteStream(FILE);
   const captured = await capture(stream, async (buffer) => {
-    await write(stream);
+    await asyncFunc();
+    stream.write(':D');
     return buffer.join('');
   });
   expect(captured).toEqual(':D'); // true

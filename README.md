@@ -29,20 +29,21 @@ stream.end(':(', () => {
 });
 ```
 
-### Async (Promise)
+### Async
 
 ```ts
 import { capture } from '@typescript-plus/stream-capture';
 import * as fs from 'fs';
 
-async function write(stream: fs.WriteStream) {
-  stream.write(':D');
+async function asyncFunc() {
+  /* ... */
 }
 
 (async () => {
   const stream = fs.createWriteStream('file');
   const captured = await capture(stream, async (buffer) => {
-    await write(stream);
+    await asyncFunc();
+    stream.write(':D');
     return buffer.join('');
   });
   captured === ':D'; // true
