@@ -3,7 +3,7 @@ export type AsyncCallback<T> = (buffer: string[]) => Promise<T>;
 export type Callback<T> = SyncCallback<T> | AsyncCallback<T>;
 
 export interface Chunk {
-  toString(...args: any[]): string;
+  toString(...args: unknown[]): string;
 }
 
 export async function capture<T>(
@@ -12,15 +12,14 @@ export async function capture<T>(
 ): Promise<T>;
 export function capture<T>(writable: NodeJS.WritableStream, callback: (buffer: string[]) => T): T;
 
-// tslint:disable-next-line:promise-function-async
 export function capture<T>(writable: NodeJS.WritableStream, callback: Callback<T>): Promise<T> | T {
-  // tslint:disable-next-line:no-unbound-method
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const original = writable.write;
   try {
     const buffer: string[] = [];
-    writable.write = (chunk: Chunk, ...args: any[]) => write(buffer, chunk, ...args);
+    writable.write = (chunk: Chunk, ...args: unknown[]) => write(buffer, chunk, ...args);
     const result = callback(buffer);
-    if (typeof (result as any).then === 'function') {
+    if (typeof (result as { then?: unknown }).then === 'function') {
       return new Promise<T>((resolve, reject) => {
         (result as Promise<T>)
           .then(value => {
@@ -41,7 +40,7 @@ export function capture<T>(writable: NodeJS.WritableStream, callback: Callback<T
   }
 }
 
-function write(buffer: string[], chunk: Chunk, ...args: any[]) {
+function write(buffer: string[], chunk: Chunk, ...args: unknown[]) {
   let callback: (() => void) | undefined;
   if (typeof args[0] === 'string') {
     args.shift(); // encoding

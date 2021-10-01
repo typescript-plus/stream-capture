@@ -1,11 +1,9 @@
 {
   "$schema": "https://schemastore.azurewebsites.net/schemas/json/tsconfig.json",
-  "extends": "./node_modules/@myowncake/config-typescript/dist/tsconfig.es5.general.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
-    "lib": ["es2017"],
-    "removeComments": true
+    "rootDir": "src"
   },
   "include": [
     "src/*.ts",

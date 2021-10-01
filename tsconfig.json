@@ -1,18 +1,8 @@
 {
   "$schema": "https://schemastore.azurewebsites.net/schemas/json/tsconfig.json",
-  "extends": "./node_modules/@myowncake/config-typescript/dist/tsconfig.es5.general.json",
+  "extends": "./node_modules/@myowncake/config/dist/tsconfig.node14.json",
   "compilerOptions": {
     "outDir": "build",
-    "rootDir": ".",
-    "lib": ["es2015"]
-  },
-  "include": [
-    "scripts/*.ts",
-    "src/*.ts",
-    "src/**/*.ts",
-    "spec/*.ts",
-    "spec/**/*.ts",
-    "test/*.ts",
-    "test/**/*.ts"
-  ]
+    "baseUrl": "."
+  }
 }
