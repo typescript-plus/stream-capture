@@ -5,17 +5,21 @@ Based on [Keep a Changelog] and [Semantic Versioning Caret].
 
 ## Edge (HEAD)
 
-* Nothing yet.
+* Nothing for now.
 
 ## 0.4.1
+
+### Fixed
 
 * Fixed wrong NPM publication on 0.4.0.
 
 ## 0.4.0
 
-### Changed
+The version 0.4.0 was skipped because the NPM package was published in error.
 
-* updated dependencies.
+## 0.3.0 or older versions
+
+The 0.3.0 and older NPM packages were accidentially deleted. These versions are available as the [@typescript-plus/stream-capture-20211002](https://www.npmjs.com/package/@typescript-plus/stream-capture-20211002) packages.
 
 ## 0.3.0
 
